@@ -47,3 +47,7 @@ class ProductVariation(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.name}"
+
+class Cart(models.Model):
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
+    items = models.ManyToManyField()
