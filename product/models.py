@@ -25,6 +25,7 @@ class Product(models.Model):
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
        return self.name
@@ -49,5 +50,18 @@ class ProductVariation(models.Model):
         return f"{self.product.name} - {self.name}"
 
 class Cart(models.Model):
-    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
-    items = models.ManyToManyField()
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Cart of {self.customer.user.username}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='cart_items', on_delete=models.CASCADE)
+    variation = models.ForeignKey(ProductVariation, blank=True, null=True, related_name='cart_items', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.product.name} (x{self.quantity}) in cart of {self.cart.customer.user.username}"
