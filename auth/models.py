@@ -2,29 +2,26 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
 
-def generate_random_code():
+
+def generate_random_id():
   return str(uuid.uuid4())[:5]
 
 
 class CustomUser(AbstractUser):
-  id = models.CharField(primary_key=True,max_length=6,default=generate_random_code)
+  id = models.CharField(primary_key=True,max_length=6,default=generate_random_id)
   email = models.EmailField(unique=True)
-  is_active = models.BooleanField(default=False)
   
   def __str__(self):
     return self.username
   
-  
+class UserStatus(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=[('online', 'Online'), ('offline', 'Offline')])
+    last_seen = models.DateTimeField()
+
 class UserProfile(models.Model):
-  user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
-  profile_image = models.ImageField(upload_to='media/profile_image')
+   user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+   bio = models.TextField(null=True,blank=True)
+   profile_pic = models.ImageField(upload_to='media/profile_pics',null=True,blank=True)
+   date_of_birth= models.DateField(blank=True,null=True)
   
-
-  
-class Location(models.Model):
-    user = models.OneToOneField(UserProfile, related_name='location', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
-
-
