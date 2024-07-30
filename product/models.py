@@ -1,5 +1,9 @@
+import uuid
 from django.db import models
 from auth.models import CustomUser
+
+def generate_random_id():
+  return str(uuid.uuid4())[:5]
 
 
 class Category(models.Model):
@@ -16,6 +20,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    id = models.CharField(primary_key=True,max_length=6,default=generate_random_id)
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description = models.TextField()
@@ -50,6 +55,7 @@ class ProductVariation(models.Model):
         return f"{self.product.name} - {self.name}"
 
 class Cart(models.Model):
+    id = models.CharField(primary_key=True,max_length=6,default=generate_random_id)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
