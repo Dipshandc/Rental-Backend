@@ -24,6 +24,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description = models.TextField()
+    location = models.CharField(max_length=25)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField()
