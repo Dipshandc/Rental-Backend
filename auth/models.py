@@ -19,6 +19,9 @@ class UserStatus(models.Model):
     status = models.CharField(max_length=10, choices=[('online', 'Online'), ('offline', 'Offline')])
     last_seen = models.DateTimeField()
 
+    class Meta:
+        verbose_name_plural = "User status "
+
 class UserProfile(models.Model):
    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
    bio = models.TextField(null=True,blank=True)
