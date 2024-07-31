@@ -25,13 +25,14 @@ class Product(models.Model):
     slug = models.SlugField(unique=True)
     description = models.TextField()
     location = models.CharField(max_length=25)
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
+    category = models.OneToOneField(Category, related_name='products', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField()
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
        return self.name
@@ -63,6 +64,7 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"Cart of {self.customer.user.username}"
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)

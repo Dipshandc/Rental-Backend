@@ -19,6 +19,7 @@ class ProductSerializer(ModelSerializer):
   class Meta:
     model = Product
     fields = ['id',
+              'user',
               'name',
               'description',
               'category',
@@ -31,6 +32,11 @@ class ProductSerializer(ModelSerializer):
               'active',
               'variations',
               'images']
+    
+    def create(self, validated_data):
+        user = self.context.get('user')
+        product = Product.objects.create(user=user,**validated_data)
+        return product
     
 class CategorySerializer(ModelSerializer):
   products = ProductSerializer(many=True, read_only=True)
