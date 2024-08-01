@@ -63,7 +63,7 @@ class Cart(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Cart of {self.customer.user.username}"
+        return f"Cart of {self.user.username}"
 
 
 class CartItem(models.Model):
