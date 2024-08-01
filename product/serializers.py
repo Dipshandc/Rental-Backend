@@ -10,12 +10,14 @@ class ProductVariationSerializer(ModelSerializer):
 class ProductImageSerializer(ModelSerializer):
   class Meta:
     model = ProductImage
-    fields = ['image','alt_text']
+    fields = ['id','image','alt_text']
 
 class ProductSerializer(ModelSerializer):
   variations = ProductVariationSerializer(many=True, read_only=True)
   images = ProductImageSerializer(many=True, read_only=True)
   id = serializers.UUIDField(read_only=True)
+  category = serializers.SerializerMethodField()
+
   class Meta:
     model = Product
     fields = ['id',
@@ -33,10 +35,13 @@ class ProductSerializer(ModelSerializer):
               'variations',
               'images']
     
-    def create(self, validated_data):
-        user = self.context.get('user')
-        product = Product.objects.create(user=user,**validated_data)
-        return product
+  def create(self, validated_data):
+    user = self.context.get('user')
+    product = Product.objects.create(user=user,**validated_data)
+    return product
+
+  def get_category(self, obj):
+    return obj.category.name if obj.category else None
     
 class CategorySerializer(ModelSerializer):
   products = ProductSerializer(many=True, read_only=True)
