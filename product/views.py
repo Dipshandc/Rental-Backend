@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Category, Product, ProductImage, ProductVariation, Cart, CartItem 
+from .models import Category, Product, ProductImage, ProductVariation, Cart, CartItem, ProductVariation
 from .filters import ProductFilter
 from .serializers import ProductVariationSerializer,\
                          ProductSerializer,\
@@ -19,7 +19,7 @@ class ProductPagination(PageNumberPagination):
 
 class ProductView(APIView):
   serializer_class = ProductSerializer
-  # permission_classes = [IsAuthenticated]
+  permission_classes = [IsAuthenticated]
   search_fields = ['name','category','description']
   filter_backends = (filters.SearchFilter,DjangoFilterBackend)
   filterset_class = ProductFilter
@@ -39,7 +39,7 @@ class ProductView(APIView):
 
 class ProductDetailsView(APIView):
   serializer_class = ProductSerializer
-  # permission_classes = [IsAuthenticated]
+  permission_classes = [IsAuthenticated]
 
   def get(self,request,pk):
     product = get_object_or_404(Product,id=pk)
@@ -64,7 +64,7 @@ class ProductDetailsView(APIView):
 
 class CartItemView(APIView):
   serializer_class = CartItemSerializer
-  # permission_classes = [IsAuthenticated]
+  permission_classes = [IsAuthenticated]
 
   def get(self,request):
     cart = get_object_or_404(Cart,user=request.user)
@@ -89,7 +89,7 @@ class CartItemView(APIView):
 
 class ProductImageView(APIView):
   serializer_class = ProductImageSerializer
-  # permission_classes = [IsAuthenticated]
+  permission_classes = [IsAuthenticated]
 
   def get(self,request,pk):
     product = get_object_or_404(Product,pk=pk)
@@ -99,8 +99,33 @@ class ProductImageView(APIView):
   
   def post(self,request,pk):
     product = get_object_or_404(Product,pk=pk)
-    product_images = ProductImage.objects.filter(product=product)
     serializer = self.serializer_class(data=request.data)
     if serializer.is_valid(raise_exception=True):
       serializer.save(product=product)
-      return Response(serializer.data,status=status.HTTP_201_CREATED)
+      return Response({'Message':'Product image added'},status=status.HTTP_201_CREATED)
+
+
+class ProductVariationView(APIView):
+  serializer_class = ProductVariationSerializer
+  permission_classes = [IsAuthenticated]
+
+  def get(self,request,pk):
+    product = get_object_or_404(Product,pk=pk)
+    product_variations = get_object_or_404(ProductVariation,product=product)
+    serializer = self.serializer_class(product_variations,many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
+
+  def post(self,request,pk):
+    product = get_object_or_404(Product,pk=pk)
+    serializer = self.serializer_class(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+      serializer.save(product=product)
+      return Response({'Message':'Product veriation added'},status=status.HTTP_201_CREATED)
+  
+  def patch(self,request,pk):
+    product = get_object_or_404(Product,pk=pk)
+    product_variations = get_object_or_404(ProductVariation,product=product)
+    serializer = self.serializer_class(product_variations,data=request.data)
+    if serializer.is_valid(raise_exception=True):
+      serializer.save()
+      return Response({'Message':'Product veriation edited successfully'},status=status.HTTP_201_CREATED)
