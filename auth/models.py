@@ -25,7 +25,7 @@ class UserStatus(models.Model):
 class UserProfile(models.Model):
    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
    bio = models.TextField(null=True,blank=True)
-   profile_pic = models.ImageField(upload_to='media/profile_pics',null=True,blank=True)
+   profile_picture = models.ImageField(upload_to='profile_picture',null=True,blank=True)
    date_of_birth= models.DateField(blank=True,null=True)
 
    def __str__(self) -> str:
