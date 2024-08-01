@@ -3,7 +3,8 @@ from .views import ProductView,\
                    ProductDetailsView,\
                    ProductImageView,\
                    CartItemView,\
-                   ProductVariationView
+                   ProductVariationView,\
+                   NestedCategoryListView
 
 
 urlpatterns = [
@@ -11,5 +12,6 @@ urlpatterns = [
   path('products/<str:pk>/', ProductDetailsView.as_view(), name='product-detail'),
   path('products/<str:pk>/images/',ProductImageView.as_view(), name='products-images'),
   path('products/<str:pk>/variation/',ProductVariationView.as_view(), name='products-variation'),
+  path('category/',NestedCategoryListView.as_view(), name='category'),
   path('cart-items/', CartItemView.as_view(), name='cart-item-list'),
 ]

@@ -43,11 +43,17 @@ class ProductSerializer(ModelSerializer):
   def get_category(self, obj):
     return obj.category.name if obj.category else None
     
-class CategorySerializer(ModelSerializer):
-  products = ProductSerializer(many=True, read_only=True)
-  class Meta:
-    model = Category 
-    fields = ['name','description','parent','products']
+class RecursiveCategorySerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'slug', 'description', 'children']
+
+    def get_children(self, obj):
+        children = Category.objects.filter(parent=obj)
+        serializer = self.__class__(children, many=True)
+        return serializer.data
 
 class CartSerializer(ModelSerializer):
   class Meta:
