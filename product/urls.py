@@ -4,7 +4,9 @@ from .views import ProductView,\
                    ProductImageView,\
                    CartItemView,\
                    ProductVariationView,\
-                   NestedCategoryListView
+                   NestedCategoryListView,\
+                   LikeProductView,\
+                   LikedProductsView
 
 
 urlpatterns = [
@@ -14,4 +16,6 @@ urlpatterns = [
   path('products/<str:pk>/variation/',ProductVariationView.as_view(), name='products-variation'),
   path('category/',NestedCategoryListView.as_view(), name='category'),
   path('cart-items/', CartItemView.as_view(), name='cart-item-list'),
+  path('products/<int:pk>/like/', LikeProductView.as_view(), name='like-product'),
+  path('products/liked/', LikedProductsView.as_view(), name='liked-products'),
 ]

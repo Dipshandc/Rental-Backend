@@ -74,3 +74,11 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} (x{self.quantity}) in cart of {self.cart.customer.user.username}"
+
+
+class LikedProducts(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f'Liked product of {self.user.username}'
