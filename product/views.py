@@ -6,13 +6,14 @@ from rest_framework.decorators import permission_classes as method_permission_cl
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Category, Product, ProductImage, ProductVariation, Cart, CartItem, ProductVariation
+from .models import Category, Product, ProductImage, ProductVariation, Cart, CartItem, ProductVariation, LikedProducts
 from .filters import ProductFilter
 from .serializers import ProductVariationSerializer,\
                          ProductSerializer,\
                          RecursiveCategorySerializer,\
                          CartItemSerializer,\
-                         ProductImageSerializer
+                         ProductImageSerializer,\
+                         LikedProductsSerializer
 
 
 class ProductPagination(PageNumberPagination):
@@ -144,3 +145,24 @@ class NestedCategoryListView(APIView):
     root_categories = Category.objects.filter(parent=None)
     serializer = RecursiveCategorySerializer(root_categories, many=True)
     return Response(serializer.data)
+
+
+class LikeProductView(APIView):
+  permission_classes = [IsAuthenticated]
+
+  def post(self, request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    liked_product, created = LikedProducts.objects.get_or_create(user=request.user, product=product)
+    if created:
+      return Response({'message': 'Product liked'}, status=status.HTTP_201_CREATED)
+    else:
+      liked_product.delete()
+      return Response({'message': 'Product unliked'}, status=status.HTTP_200_OK)
+
+class LikedProductsView(APIView):
+  permission_classes = [IsAuthenticated]
+    
+  def get(self, request):
+    liked_products = LikedProducts.objects.filter(user=request.user)
+    serializer = LikedProductsSerializer(liked_products, many=True, context={'request': request})
+    return Response(serializer.data, status=status.HTTP_200_OK)
