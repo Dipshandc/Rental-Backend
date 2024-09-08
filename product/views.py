@@ -154,10 +154,10 @@ class LikeProductView(APIView):
     product = get_object_or_404(Product, pk=pk)
     liked_product, created = LikedProducts.objects.get_or_create(user=request.user, product=product)
     if created:
-      return Response({'message': 'Product liked'}, status=status.HTTP_201_CREATED)
+      return Response({'message': f'Product liked by {request.user}'}, status=status.HTTP_201_CREATED)
     else:
       liked_product.delete()
-      return Response({'message': 'Product unliked'}, status=status.HTTP_200_OK)
+      return Response({'message': f'Product unliked by {request.user}'}, status=status.HTTP_200_OK)
 
 class LikedProductsView(APIView):
   permission_classes = [IsAuthenticated]
